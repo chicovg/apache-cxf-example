@@ -1,0 +1,101 @@
+<definitions name="Courses"
+             targetNamespace="https://lionuniversity.edu/wsdl/Courses.wsdl"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/"
+             xmlns:c="https://lionuniversity.edu/wsdl/Courses.wsdl"
+             xmlns:cxsd="https://lionuniversity.edu/xsd/Courses.xsd"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <types>
+        <xsd:schema targetNamespace="https://lionuniversity.edu/xsd/Courses.xsd"
+                    xmlns="http://www.w3.org/2001/XMLSchema">
+
+            <element name="Courses">
+                <complexType>
+                    <sequence>
+                        <element minOccurs="0" maxOccurs="unbounded" ref="cxsd:CourseData"/>
+                    </sequence>
+                </complexType>
+            </element>
+
+            <element name="CourseData">
+                <complexType>
+                    <sequence>
+                        <element name="courseId" type="xsd:decimal"/>
+                        <element name="courseName" type="xsd:string"/>
+                        <element name="sectionId" type="xsd:decimal"/>
+                        <element name="prerequisite" type="xsd:decimal"/>
+                    </sequence>
+                </complexType>
+            </element>
+
+            <element name="FindAllCoursesFault">
+                <complexType>
+                    <all>
+                        <xsd:element name="errorMessage" type="xsd:string"/>
+                    </all>
+                </complexType>
+            </element>
+        </xsd:schema>
+    </types>
+
+    <message name="GetAllCoursesRequest" />
+
+    <message name="GetAllCoursesResponse" >
+        <part name="body" element="cxsd:Courses"/>
+    </message>
+
+    <message name="AddNewCourseRequest">
+        <part name="body" element="cxsd:CourseData" />
+    </message>
+
+    <message name="AddNewCourseResponse">
+        <part name="body" element="cxsd:CourseData" />
+    </message>
+
+    <message name="CourseCatalogFault" >
+        <part name="body" element="cxsd:FindAllCoursesFault" />
+    </message>
+
+    <portType name="CourseCatalog">
+        <operation name="getAllCourses">
+            <input message="c:GetAllCoursesRequest"/>
+            <output message="c:GetAllCoursesResponse"/>
+            <fault name="GetAllCoursesFault" message="c:CourseCatalogFault" />
+        </operation>
+        <operation name="addNewCourse">
+            <input message="c:AddNewCourseRequest"/>
+            <output message="c:AddNewCourseResponse"/>
+            <fault name="AddNewCourseFault" message="c:CourseCatalogFault" />
+        </operation>
+    </portType>
+
+    <binding name="CourseCatalogSoapBinding" type="c:CourseCatalog">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="getAllCourses">
+            <output>
+                <soap:body use="literal" namespace="https://lionuniversity.edu/wsdl/Courses.wsdl"/>
+            </output>
+            <fault name="GetAllCoursesFault">
+                <soap:body use="literal" namespace="https://lionuniversity.edu/wsdl/Courses.wsdl"/>
+            </fault>
+        </operation>
+        <operation name="addNewCourse">
+            <input>
+                <soap:body use="literal" namespace="https://lionuniversity.edu/wsdl/Courses.wsdl" />
+            </input>
+            <output>
+                <soap:body use="literal" namespace="https://lionuniversity.edu/wsdl/Courses.wsdl"/>
+            </output>
+            <fault name="AddNewCourseFault">
+                <soap:body use="literal" namespace="https://lionuniversity.edu/wsdl/Courses.wsdl"/>
+            </fault>
+        </operation>
+    </binding>
+
+    <service name="CourseCatalog">
+        <documentation>A service which exposes operations to manage a course catalog</documentation>
+        <port name="CourseCatalogPort" binding="c:CourseCatalogSoapBinding" />
+    </service>
+
+</definitions>
